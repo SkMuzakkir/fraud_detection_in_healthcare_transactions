@@ -1,0 +1,23 @@
+Special notes and instructions for this project:
+
+
+1. This file is intentionally named `re.txt` as requested. It contains quick run steps and hints.
+
+
+2. How to run:
+- Create a virtual environment (recommended): python -m venv venv
+- Activate it (Windows: venv\Scripts\activate, mac/linux: source venv/bin/activate)
+- Install dependencies: pip install -r requirements.txt
+- Run the app: streamlit run app.py
+
+
+3. The app will save two files after training: fraud_detection_model.pkl and encoder.pkl. Keep them together with app.py.
+
+
+4. The encoder uses sklearn.OrdinalEncoder with unknown_value=-1 so new categories at prediction time won't crash training; they will be encoded as -1.
+
+
+5. sample_data.csv is a tiny toy dataset included for quick testing only — do not treat results as production-grade.
+
+
+6. If your real dataset has many categorical names (e.g. many unique nameOrig), consider removing or hashing those fields before training.
