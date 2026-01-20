@@ -54,5 +54,46 @@ if data is not None:
         # Features and target
         X = data.drop("isFraud", axis=1)
         y = data["isFraud"]
+        
+        st.write("---")
+        
+        # Train model button
+        if st.button("Train Model", type="primary"):
+            with st.spinner("Training model..."):
+                # Encode categorical features
+                if categorical_cols:
+                    encoder = OrdinalEncoder(handle_unknown='use_encoded_value', unknown_value=-1)
+                    X[categorical_cols] = encoder.fit_transform(X[categorical_cols])
+                    joblib.dump(encoder, ENCODER_PATH)
+                
+                # Split data
+                X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+                
+                # Train Random Forest
+                model = RandomForestClassifier(n_estimators=100, random_state=42)
+                model.fit(X_train, y_train)
+                
+                # Save model
+                joblib.dump(model, MODEL_PATH)
+                
+                # Evaluate
+                y_pred = model.predict(X_test)
+                accuracy = accuracy_score(y_test, y_pred)
+                
+                st.success(f"Model trained successfully! Accuracy: {accuracy:.2%}")
+                
+                # Show confusion matrix
+                st.write("### Confusion Matrix")
+                cm = confusion_matrix(y_test, y_pred)
+                fig, ax = plt.subplots(figsize=(6, 4))
+                sns.heatmap(cm, annot=True, fmt='d', cmap='Blues', ax=ax)
+                ax.set_xlabel('Predicted')
+                ax.set_ylabel('Actual')
+                st.pyplot(fig)
+                
+                # Classification report
+                st.write("### Classification Report")
+                st.text(classification_report(y_test, y_pred))
 
-st.write("\n\n---\nIf you want the bundled sample dataset, open `sample_data.csv` in the canvas and use the checkbox 'Use bundled sample_data.csv instead of uploading'.")
+st.write("---")
+st.write("If you want the bundled sample dataset, open `sample_data.csv` in the canvas and use the checkbox 'Use bundled sample_data.csv instead of uploading'.")
